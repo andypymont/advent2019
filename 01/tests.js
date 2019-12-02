@@ -26,12 +26,6 @@ QUnit.test('total_fuel_required()', function(assert) {
   assert.equal(total_fuel_required(input), 34241, desc)
 })
 
-QUnit.test('Part 1 Solution', function(assert) {
-  assert.equal(total_fuel_required(puzzle_input),
-               3372463,
-               'total_fuel_required(puzzle_input) == 3372463')
-})
-
 QUnit.test('fuel_required_including_fuel_mass()', function(assert) {
   const cases = [
     { input: 14, expected: 2 },
@@ -49,8 +43,13 @@ QUnit.test('fuel_required_including_fuel_mass()', function(assert) {
   })
 })
 
-QUnit.test('Part 2 Solution', function(assert) {
+QUnit.test('Solutions', async function(assert) {
+  const puzzle_input = await fetch_puzzle_input()
+  assert.equal(total_fuel_required(puzzle_input),
+               3372463,
+               'Part 1: total_fuel_required(puzzle_input) == 3372463')
   assert.equal(total_fuel_required(puzzle_input, true),
                5055835,
-               'total_fuel_required(puzzle_input, true) == 5055835')
+               'Part 2: total_fuel_required(puzzle_input, true) == 5055835')
+
 })
