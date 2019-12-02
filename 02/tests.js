@@ -37,13 +37,13 @@ QUnit.test('run_program() for example programs', function(assert) {
   })
 })
 
-QUnit.test('read_and_patch_program()', function(assert) {
+QUnit.test('read_program()', function(assert) {
   const cases = [
-    { input: '1,1,1,1,1,99\n',
+    { input: '1,12,2,1,1,99\n',
       expected: [1, 12, 2, 1, 1, 99],
     },
     { input: '4,8,16,32,64,128,256,99\t',
-      expected: [4, 12, 2, 32, 64, 128, 256, 99],
+      expected: [4, 8, 16, 32, 64, 128, 256, 99],
     },
   ]
   cases.forEach(function({ input, expected }) {
@@ -54,13 +54,36 @@ QUnit.test('read_and_patch_program()', function(assert) {
       expected.join(','),
       ']'
     ].join('')
-    assert.deepEqual(read_and_patch_program(input), expected, desc)
+    assert.deepEqual(read_program(input), expected, desc)
+  })
+})
+
+QUnit.test('find_verb_and_noun(...)', function(assert) {
+  const cases = [
+    [1, 1],
+    [3, 3],
+    [4, 5],
+    [12, 201],
+  ]
+  cases.forEach(function( [noun, verb] ) {
+    function tester(mem, n, v) {
+      if ( n == noun && v == verb) {
+        return 19690720
+      } else {
+        return 1
+      }
+    }
+    assert.deepEqual(find_verb_and_noun([], tester), { noun, verb })
   })
 })
 
 QUnit.test('Solutions', async function(assert) {
-  const puzzle_input = await fetch_puzzle_input().then(read_and_patch_program)
-  assert.equal(run_program(puzzle_input)[0],
+  const program = await fetch_puzzle_input().then(read_program)
+  assert.equal(run_intcode(program, 12, 2),
                5434663,
-               'Part 1: value at 0 is 5434663')
+               'Part 1: run_intcode(program, 12, 2) == 5434663')
+  assert.deepEqual(find_verb_and_noun(program),
+                   { 'noun': 45, 'verb': 59 },
+                   'Part 2: find_verb_and_noun(program) -> noun:45, verb:59')
+                   // 100 * 45 * 59 == 265500
 })
