@@ -12,15 +12,19 @@ function move(current, direction) {
 
 function visited(route) {
   let current = [0, 0]
-  const v = new Set()
-  v.add('0,0')
+  let steps = 0
+  const v = new Map()
 
   route.split(',').forEach(function(segment) {
     const direction = segment.substring(0, 1)
     const distance = parseInt(segment.substring(1))
     for ( let i = 0; i < distance; i++ ) {
       current = move(current, direction)
-      v.add(current.join(','))
+      steps++
+      const c = current.join(',')
+      if ( !(v.has(c)) ) {
+        v.set(c, steps)
+      }
     }
   })
 
@@ -30,7 +34,7 @@ function visited(route) {
 function crossovers(wires) {
   function intersection(first, second) {
     const is = new Set()
-    for ( let item of first ) {
+    for ( let item of first.keys() ) {
       if ( second.has(item) ) {
         is.add(item)
       }
@@ -41,13 +45,24 @@ function crossovers(wires) {
   return wires.reduce((x, y) => intersection(x, y))
 }
 
-function nearest_crossing(routes) {
-  const wires = routes.split('\n').map(visited)
-  const sum = (x, y) => x + y
-  const manhattan = c => c.split(',').map(x => Math.abs(x)).reduce(sum)
+const sum = (x, y) => x + y
 
-  return Array.from(crossovers(wires).values())
-              .map(manhattan)
-              .filter(x => x !== 0)
-              .reduce((x,y) => Math.min(x,y))
+function manhattan(coord) {
+  return coord.split(',').map(x => Math.abs(x)).reduce(sum)
+}
+
+function step_summer(first, second) {
+  return coords => (first.get(coords)||0) + (second.get(coords)||0)
+}
+
+function nearest_crossing(routes) {
+  const [one, two] = routes.split('\n').map(visited)
+  const step_sum = step_summer(one, two)
+  const crossing = Array.from(crossovers([one, two]).values())
+                        .filter(c => c !== '0,0')
+
+  return {
+    manhattan: crossing.map(manhattan).reduce((x,y) => Math.min(x, y)),
+    steps: crossing.map(step_sum).reduce((x,y) => Math.min(x, y)),
+  }
 }
