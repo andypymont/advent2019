@@ -1,12 +1,12 @@
 QUnit.test('check_password(..)', function(assert) {
   const cases = [
-    [122345, {'ascending': true, 'groups': ['22']}],
+    [122345, {'ascending': true, 'groups': ['1', '22', '3', '4', '5']}],
     [111111, {'ascending': true, 'groups': ['111111']}],
-    [223450, {'ascending': false, 'groups': ['22']}],
-    [123789, {'ascending': true, 'groups': []}],
-    [141414, {'ascending': false, 'groups': []}],
+    [223450, {'ascending': false, 'groups': ['22', '3', '4', '5', '0']}],
+    [123789, {'ascending': true, 'groups': ['1', '2', '3', '7', '8', '9']}],
+    [141414, {'ascending': false, 'groups': ['1', '4', '1', '4', '1', '4']}],
     [112233, {'ascending': true, 'groups': ['11', '22', '33']}],
-    [123444, {'ascending': true, 'groups': ['444']}],
+    [123444, {'ascending': true, 'groups': ['1', '2', '3', '444']}],
     [111122, {'ascending': true, 'groups': ['1111', '22']}],
   ]
   cases.forEach(function([input, expected]) {

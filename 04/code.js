@@ -7,35 +7,26 @@ const ascending_pairs = new Set([
 ])
 
 function check_password(password) {
-  let groups = []
-  let current_group = 'X'
-  let ascending = true
-
-  password.toString()
-          .split('')
-          .forEach(function(digit, ix, digits) {
-            if ( digit === current_group[0] ) {
-              current_group += digit
-            } else {
-              groups.push(current_group)
-              current_group = digit
-              if ( ix > 0 ) {
-                ascending = ( ascending &&
-                              ascending_pairs.has(digits[ix-1] + digit) )
-              }
-            }
-          })
-  groups.push(current_group)
-
-  return {
-    ascending: ascending,
-    groups: groups.filter(group => group.length > 1)
-  }
-
+  return password.toString()
+                 .split('')
+                 .reduce(function(rv, digit, ix, digits) {
+                   let prev = (ix === 0) ? '' : digits[ix-1]
+                   if ( digit === prev ) {
+                     rv.groups[rv.groups.length - 1] += digit
+                   } else {
+                     rv.groups.push(digit)
+                   }
+                   if ( ix > 0 ) {
+                     let pair = digits[ix-1] + digit
+                     rv.ascending = (rv.ascending && ascending_pairs.has(pair))
+                   }
+                   return rv
+                 },
+               {
+                 ascending: true,
+                 groups: []
+               })
 }
-
-const has_any_group = groups => groups.length > 0
-const has_two_group = groups => groups.filter(g => g.length === 2).length > 0
 
 function passwords_in_range(range) {
   const [start, end] = range.split('-').map(x => parseInt(x))
@@ -44,8 +35,7 @@ function passwords_in_range(range) {
 
   for ( let p = start; p <= end; p++ ) {
     const { ascending, groups } = check_password(p)
-
-    if ( ascending && (groups.length > 0) ) {
+    if ( ascending && (groups.filter(g => g.length > 1).length > 0) ) {
       any_group++
     }
     if ( ascending && (groups.filter(g => g.length === 2).length > 0) ) {
