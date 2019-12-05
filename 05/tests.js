@@ -210,6 +210,180 @@ QUnit.test('op 4 - write to output buffer', function(assert) {
   })
 })
 
+QUnit.test('op 5 - jump-if-true', function(assert) {
+  const cases = [
+    {
+      input: {
+        memory: [5, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 0,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [5, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 99,
+        input: [],
+        output: [],
+      },
+      desc: 'jump if true - position mode, non-zero value'
+    },
+    {
+      input: {
+        memory: [5, 5, 8, 9, 10, 9, 4, 9, 0, -1, 8],
+        ip: 1,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [5, 5, 8, 9, 10, 9, 4, 9, 0, -1, 8],
+        ip: 4,
+        input: [],
+        output: [],
+      },
+      desc: 'jump if true - position mode, zero value'
+    },
+    {
+      input: {
+        memory: [1005, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 0,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [1005, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 8,
+        input: [],
+        output: [],
+      },
+      desc: 'jump if true - immediate mode, non-zero value'
+    },
+  ]
+  cases.forEach(function({ input, expected, desc }) {
+    assert.deepEqual(op(input), expected, desc)
+  })
+})
+
+QUnit.test('op 6 - jump-if-false', function(assert) {
+  const cases = [
+    {
+      input: {
+        memory: [6, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 0,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [6, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 3,
+        input: [],
+        output: [],
+      },
+      desc: 'jump if false - position mode, non-zero value'
+    },
+    {
+      input: {
+        memory: [99, 6, 8, 9, 10, 20, 4, 9, 0, 0, 8],
+        ip: 1,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [99, 6, 8, 9, 10, 20, 4, 9, 0, 0, 8],
+        ip: 0,
+        input: [],
+        output: [],
+      },
+      desc: 'jump if false - position mode, zero value'
+    },
+    {
+      input: {
+        memory: [1005, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 0,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [1005, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
+        ip: 8,
+        input: [],
+        output: [],
+      },
+      desc: 'jump if true - immediate mode, non-zero value'
+    },
+  ]
+  cases.forEach(function({ input, expected, desc }) {
+    assert.deepEqual(op(input), expected, desc)
+  })
+})
+
+QUnit.test('op 7 - less than', function(assert) {
+  const cases = [
+    {
+      input: {
+        memory: [1, 2, 7, 4, 5, 6, 7, 8],
+        ip: 2,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [1, 2, 7, 4, 5, 6, 1, 8],
+        ip: 6,
+        input: [],
+        output: [],
+      },
+      desc: 'less than - position mode, a < b'
+    },
+    {
+      input: {
+        memory: [1, 2, 7, 5, 4, 6, 7, 8],
+        ip: 2,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [1, 2, 7, 5, 4, 6, 0, 8],
+        ip: 6,
+        input: [],
+        output: [],
+      },
+      desc: 'less than - position mode, a > b'
+    },
+    {
+      input: {
+        memory: [1, 2, 7, 2, 2, 6, 7, 8],
+        ip: 2,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [1, 2, 7, 2, 2, 6, 0, 8],
+        ip: 6,
+        input: [],
+        output: [],
+      },
+      desc: 'less than - position mode, a == b'
+    },
+    {
+      input: {
+        memory: [-1, 107, 1, 1, 0, 99],
+        ip: 1,
+        input: [],
+        output: [],
+      },
+      expected: {
+        memory: [1, 107, 1, 1, 0, 99],
+        ip: 5,
+        input: [],
+        output: [],
+      },
+      desc: 'less than - immediate mode, a < b'
+    },
+  ]
+  cases.forEach(function({ input, expected, desc }) {
+    assert.deepEqual(op(input), expected, desc)
+  })
+})
+
 QUnit.test('run program', function(assert) {
   const cases = [
     {
@@ -258,6 +432,36 @@ QUnit.test('run program', function(assert) {
         output: [],
       },
     },
+    {
+      programtext: '3,9,8,9,10,9,4,9,99,-1,8',
+      inputs: '8',
+      expected: {
+        memory: [3, 9, 8, 9, 10, 9, 4, 9, 99, 1, 8],
+        ip: 8,
+        input: [],
+        output: [1],
+      },
+    },
+    {
+      programtext: '3,9,8,9,10,9,4,9,99,-1,8',
+      inputs: '7',
+      expected: {
+        memory: [3, 9, 8, 9, 10, 9, 4, 9, 99, 0, 8],
+        ip: 8,
+        input: [],
+        output: [0],
+      },
+    },
+    {
+      programtext: '3,3,1108,-1,8,3,4,3,99',
+      inputs: '8',
+      expected: {
+        memory: [3, 3, 1108, 1, 8, 3, 4, 3, 99],
+        ip: 8,
+        input: [],
+        output: [1],
+      },
+    },
   ]
   cases.forEach(function({ programtext, inputs, expected }) {
     if ( inputs == undefined ) {
@@ -272,9 +476,26 @@ QUnit.test('run program', function(assert) {
   })
 })
 
+QUnit.test('run_program() jump tests from Part 2', function(assert) {
+  [
+    '3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9',
+    '3,3,1105,-1,9,1101,0,0,12,4,12,99,1'
+  ].forEach(function(programtext) {
+    assert.equal(run_program(programtext, '0').output.pop(),
+                 0,
+                 'run_program("' + programtext + ', "0"' + '") === 0')
+    assert.equal(run_program(programtext, '4').output.pop(),
+                 1,
+                 'run_program("' + programtext + ', "4"' + '") === 1')
+  })
+})
+
 QUnit.test('Solutions', async function(assert) {
   const programtext = await fetch_puzzle_input().then(txt => txt.trim())
   assert.deepEqual(run_program(programtext, '1').output,
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 11933517],
-                   'Part 1: All tests pass and diagnostic code === 11933517')
+                   'Part 1: Input 1 tests pass & diagnostic code === 11933517')
+  assert.deepEqual(run_program(programtext, '5').output,
+                   [10428568],
+                   'Part 2: Input 5 diagnostic code === 10428568')
 })
