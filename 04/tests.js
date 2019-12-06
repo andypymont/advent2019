@@ -30,7 +30,7 @@ QUnit.test('passwords_in_range(..)', function(assert) {
 })
 
 QUnit.test('Solutions', async function(assert) {
-  const input = await fetch_puzzle_input().then(x => x.trim())
+  const input = await fetch_puzzle_input()
   const passwords = passwords_in_range(input)
 
   assert.equal(passwords.any_group, 466, 'Part 1: 466 valid passwords in range')

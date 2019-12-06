@@ -491,7 +491,7 @@ QUnit.test('run_program() jump tests from Part 2', function(assert) {
 })
 
 QUnit.test('Solutions', async function(assert) {
-  const programtext = await fetch_puzzle_input().then(txt => txt.trim())
+  const programtext = await fetch_puzzle_input()
   assert.deepEqual(run_program(programtext, '1').output,
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 11933517],
                    'Part 1: Input 1 tests pass & diagnostic code === 11933517')

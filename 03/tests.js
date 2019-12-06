@@ -111,7 +111,7 @@ QUnit.test('nearest_crossing(wires)', function(assert) {
 })
 
 QUnit.test('Solutions', async function(assert) {
-    const input = await fetch_puzzle_input().then(pi => pi.trim())
+    const input = await fetch_puzzle_input()
     const nearest = nearest_crossing(input)
 
     assert.equal(nearest['manhattan'],
