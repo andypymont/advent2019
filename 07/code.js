@@ -1,7 +1,3 @@
-function run_amplifier(program, phase, signal) {
-  return run_program(program, [phase, signal]).output.shift()
-}
-
 function thruster_signal(program, phasesettings, looping=false) {
   let amplifiers = phasesettings.map(function(phase) {
     return {
