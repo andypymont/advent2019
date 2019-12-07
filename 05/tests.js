@@ -415,7 +415,7 @@ QUnit.test('run program', function(assert) {
     },
     {
       programtext: '3,0,4,0,99',
-      inputs: '42',
+      inputs: [42],
       expected: {
         memory: [42, 0, 4, 0, 99],
         ip: 4,
@@ -434,7 +434,7 @@ QUnit.test('run program', function(assert) {
     },
     {
       programtext: '3,9,8,9,10,9,4,9,99,-1,8',
-      inputs: '8',
+      inputs: [8],
       expected: {
         memory: [3, 9, 8, 9, 10, 9, 4, 9, 99, 1, 8],
         ip: 8,
@@ -444,7 +444,7 @@ QUnit.test('run program', function(assert) {
     },
     {
       programtext: '3,9,8,9,10,9,4,9,99,-1,8',
-      inputs: '7',
+      inputs: [7],
       expected: {
         memory: [3, 9, 8, 9, 10, 9, 4, 9, 99, 0, 8],
         ip: 8,
@@ -454,7 +454,7 @@ QUnit.test('run program', function(assert) {
     },
     {
       programtext: '3,3,1108,-1,8,3,4,3,99',
-      inputs: '8',
+      inputs: [8],
       expected: {
         memory: [3, 3, 1108, 1, 8, 3, 4, 3, 99],
         ip: 8,
@@ -465,37 +465,60 @@ QUnit.test('run program', function(assert) {
   ]
   cases.forEach(function({ programtext, inputs, expected }) {
     if ( inputs == undefined ) {
-      assert.deepEqual(run_program(programtext),
+      assert.deepEqual(run_program(read_program(programtext)),
                        expected,
-                       'run_program("' + programtext + '")')
+                       'run_program(read_program("' + programtext + '"))')
     } else {
-      assert.deepEqual(run_program(programtext, inputs),
+      assert.deepEqual(run_program(read_program(programtext), inputs),
                        expected,
-                       'run_program("' + programtext + '", "' + inputs + '")')
+                       'run_program(read_program("' + programtext + '", [' +
+                       inputs.join(',') + '])')
     }
   })
 })
 
 QUnit.test('run_program() jump tests from Part 2', function(assert) {
-  [
-    '3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9',
-    '3,3,1105,-1,9,1101,0,0,12,4,12,99,1'
-  ].forEach(function(programtext) {
-    assert.equal(run_program(programtext, '0').output.pop(),
-                 0,
-                 'run_program("' + programtext + ', "0"' + '") === 0')
-    assert.equal(run_program(programtext, '4').output.pop(),
-                 1,
-                 'run_program("' + programtext + ', "4"' + '") === 1')
+  const p1 = read_program('3,9,8,9,10,9,4,9,99,-1,8')
+  const p2 = read_program('3,3,1108,-1,8,3,4,3,99')
+  const eqtests = [
+    [8, 1],
+    [7, 0],
+    [9, 0],
+    [-8, 0],
+  ]
+  eqtests.forEach(function([input, expected]) {
+    assert.equal(run_program(p1, [input]).output.shift(),
+                 expected,
+                 'run_program(p1, [' + input + ']) outputs ' + expected)
+    assert.equal(run_program(p2, [input]).output.shift(),
+                 expected,
+                 'run_program(p2, [' + input + ']) outputs ' + expected)
+  })
+
+  const p3 = read_program('3,9,7,9,10,9,4,9,99,-1,8')
+  const p4 = read_program('3,3,1107,-1,8,3,4,3,99')
+  const lttests = [
+    [8, 0],
+    [7, 1],
+    [9, 0],
+    [-8, 1],
+  ]
+  lttests.forEach(function([input, expected]) {
+    assert.equal(run_program(p3, [input]).output.shift(),
+                 expected,
+                 'run_program(p3, [' + input + ']) outputs ' + expected)
+    assert.equal(run_program(p4, [input]).output.shift(),
+                 expected,
+                 'run_program(p4, [' + input + ']) outputs ' + expected)
   })
 })
 
 QUnit.test('Solutions', async function(assert) {
-  const programtext = await fetch_puzzle_input()
-  assert.deepEqual(run_program(programtext, '1').output,
+  const program = await fetch_puzzle_input().then(txt => read_program(txt))
+  assert.deepEqual(run_program(program, [1]).output,
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 11933517],
                    'Part 1: Input 1 tests pass & diagnostic code === 11933517')
-  assert.deepEqual(run_program(programtext, '5').output,
+  assert.deepEqual(run_program(program, [5]).output,
                    [10428568],
                    'Part 2: Input 5 diagnostic code === 10428568')
 })

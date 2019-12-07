@@ -54,16 +54,21 @@ function op({ ip, memory, input, output }) {
   return { ip, memory, input, output }
 }
 
-function run_program(programtext, inputs) {
+function read_program(programtext) {
+  return programtext.split(',').map(i => parseInt(i))
+}
+
+function run_program(initial_memory, inputs) {
   let program = {
-    memory: programtext.split(',').map(i => parseInt(i)),
-    input: inputs == undefined ? [] : inputs.split(',').map(i => parseInt(i)),
+    memory: initial_memory,
+    input: inputs||[],
     ip: 0,
-    output: [],
+    output :[]
   }
 
   while ( program.memory[program.ip] !== 99 ) {
     program = op(program)
   }
+
   return program
 }
