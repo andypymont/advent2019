@@ -1,8 +1,8 @@
-const p1 = [3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0]
-const p2 = [3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,
-            4,23,99,0,0]
-const p3 = [3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,
-            33,1,33,31,31,1,32,31,31,4,31,99,0,0,0]
+const p1 = '3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0'
+const p2 = '3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,' +
+           '23,4,23,99,0,0'
+const p3 = '3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,' +
+           '7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0'
 
 QUnit.test('thruster_signal()', function(assert) {
   const cases = [
@@ -12,14 +12,16 @@ QUnit.test('thruster_signal()', function(assert) {
   ]
   cases.forEach(function([program, phasesettings, expected]) {
     const desc = [
-      'thruster_signal([',
-      program.slice(0, 4).join(','),
-      '], [',
+      'thruster_signal(read_program("',
+      program.split(',').slice(0, 4).join(','),
+      '"), [',
       phasesettings.join(','),
       ']) === ',
       expected
     ].join('')
-    assert.equal(thruster_signal(program, phasesettings), expected, desc)
+    assert.equal(thruster_signal(read_program(program), phasesettings),
+                 expected,
+                 desc)
   })
 })
 
@@ -41,16 +43,49 @@ QUnit.test('max_thruster_signal()', function(assert) {
   ]
   cases.forEach(function([program, expected]) {
     const desc = [
-      'max_thruster_signal([',
-      program.slice(0, 4).join(','),
+      'max_thruster_signal(read_program("',
+      program.split(',').slice(0, 4).join(','),
       '...',
-      ']) === ',
+      '")) === ',
       expected
     ].join('')
-    assert.equal(max_thruster_signal(program),
+    assert.equal(max_thruster_signal(read_program(program)),
                  expected,
                  desc)
   })
+})
+
+QUnit.test('run_program() flag to pause on output', function(assert) {
+  const before = {
+    ip: 0,
+    memory: [4, 5, 4, 6, 99, 50, 60],
+    input: [],
+    output: [],
+  }
+  const first = {
+    ip: 2,
+    memory: [4, 5, 4, 6, 99, 50, 60],
+    input: [],
+    output: [50],
+    status: 'paused',
+  }
+  const second = {
+    ip: 4,
+    memory: [4, 5, 4, 6, 99, 50, 60],
+    input: [],
+    output: [50, 60],
+    status: 'paused',
+  }
+  const third = {
+    ip: 4,
+    memory: [4, 5, 4, 6, 99, 50, 60],
+    input: [],
+    output: [50, 60],
+    status: 'finished',
+  }
+  assert.deepEqual(run_program(before, [], true), first)
+  assert.deepEqual(run_program(first, [], true), second)
+  assert.deepEqual(run_program(second, [], true), third)
 })
 
 QUnit.test('Solutions', async function(assert) {

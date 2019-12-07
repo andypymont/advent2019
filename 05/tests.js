@@ -6,12 +6,14 @@ QUnit.test('op 1 - add arguments together', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'add - both inputs in position mode'
     },
@@ -21,12 +23,14 @@ QUnit.test('op 1 - add arguments together', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1101, 9, 10, 19, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'add - both inputs in immediate mode'
     },
@@ -36,12 +40,14 @@ QUnit.test('op 1 - add arguments together', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1001, 9, 10, 5, 2, 40, 11, 0, 99, 30, 40, 50],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'add - one input in position and one in immediate mode'
     }
@@ -59,12 +65,14 @@ QUnit.test('op 2 - multiply arguments together', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [2, 9, 10, 11, 2, 3, 11, 0, 99, 30, 40, 1200],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'multiply - both inputs in position mode'
     },
@@ -74,12 +82,14 @@ QUnit.test('op 2 - multiply arguments together', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1102, 9, 10, 90, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'multiply - both inputs in immediate mode'
     },
@@ -89,12 +99,14 @@ QUnit.test('op 2 - multiply arguments together', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1002, 9, 10, 5, 2, 300, 11, 0, 99, 30, 40, 50],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'multiply - one input in position and one in immediate mode'
     }
@@ -112,12 +124,14 @@ QUnit.test('op 3 - read from input buffer', function(assert) {
         ip: 0,
         input: [14],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [3, 9, 10, 11, 2, 3, 11, 0, 99, 14, 40, 50],
         ip: 2,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'input - only item in input buffer'
     },
@@ -127,12 +141,14 @@ QUnit.test('op 3 - read from input buffer', function(assert) {
         ip: 0,
         input: [4, 34, 15],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [3, 2, 4, 5, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 2,
         input: [34, 15],
         output: [],
+        status: 'ready',
       },
       desc: 'input - one item from longer input buffer'
     }
@@ -150,12 +166,14 @@ QUnit.test('op 4 - write to output buffer', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [4, 9, 10, 11, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 2,
         input: [],
         output: [30],
+        status: 'ready',
       },
       desc: 'output - position mode to empty output buffer'
     },
@@ -165,12 +183,14 @@ QUnit.test('op 4 - write to output buffer', function(assert) {
         ip: 0,
         input: [],
         output: [13, 16, -1],
+        status: 'ready',
       },
       expected: {
         memory: [4, 10, 10, 11, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 2,
         input: [],
         output: [13, 16, -1, 40],
+        status: 'ready',
       },
       desc: 'output - position mode to longer output buffer'
     },
@@ -180,12 +200,14 @@ QUnit.test('op 4 - write to output buffer', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [104, 2, 10, 5, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 2,
         input: [],
         output: [2],
+        status: 'ready',
       },
       desc: 'output - immediate mode to empty output buffer'
     },
@@ -195,12 +217,14 @@ QUnit.test('op 4 - write to output buffer', function(assert) {
         ip: 0,
         input: [],
         output: [-1, -3, 0],
+        status: 'ready',
       },
       expected: {
         memory: [104, 8, 10, 5, 2, 3, 11, 0, 99, 30, 40, 50],
         ip: 2,
         input: [],
         output: [-1, -3, 0, 8],
+        status: 'ready',
       },
       desc: 'output - immediate mode to longer output buffer'
     }
@@ -218,12 +242,14 @@ QUnit.test('op 5 - jump-if-true', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [5, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
         ip: 99,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'jump if true - position mode, non-zero value'
     },
@@ -233,12 +259,14 @@ QUnit.test('op 5 - jump-if-true', function(assert) {
         ip: 1,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [5, 5, 8, 9, 10, 9, 4, 9, 0, -1, 8],
         ip: 4,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'jump if true - position mode, zero value'
     },
@@ -248,12 +276,14 @@ QUnit.test('op 5 - jump-if-true', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1005, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
         ip: 8,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'jump if true - immediate mode, non-zero value'
     },
@@ -271,12 +301,14 @@ QUnit.test('op 6 - jump-if-false', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [6, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
         ip: 3,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'jump if false - position mode, non-zero value'
     },
@@ -286,12 +318,14 @@ QUnit.test('op 6 - jump-if-false', function(assert) {
         ip: 1,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [99, 6, 8, 9, 10, 20, 4, 9, 0, 0, 8],
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'jump if false - position mode, zero value'
     },
@@ -301,12 +335,14 @@ QUnit.test('op 6 - jump-if-false', function(assert) {
         ip: 0,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1005, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8],
         ip: 8,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'jump if true - immediate mode, non-zero value'
     },
@@ -324,12 +360,14 @@ QUnit.test('op 7 - less than', function(assert) {
         ip: 2,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1, 2, 7, 4, 5, 6, 1, 8],
         ip: 6,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'less than - position mode, a < b'
     },
@@ -339,12 +377,14 @@ QUnit.test('op 7 - less than', function(assert) {
         ip: 2,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1, 2, 7, 5, 4, 6, 0, 8],
         ip: 6,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'less than - position mode, a > b'
     },
@@ -354,12 +394,14 @@ QUnit.test('op 7 - less than', function(assert) {
         ip: 2,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1, 2, 7, 2, 2, 6, 0, 8],
         ip: 6,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'less than - position mode, a == b'
     },
@@ -369,12 +411,14 @@ QUnit.test('op 7 - less than', function(assert) {
         ip: 1,
         input: [],
         output: [],
+        status: 'ready',
       },
       expected: {
         memory: [1, 107, 1, 1, 0, 99],
         ip: 5,
         input: [],
         output: [],
+        status: 'ready',
       },
       desc: 'less than - immediate mode, a < b'
     },
@@ -393,6 +437,7 @@ QUnit.test('run program', function(assert) {
         ip: 4,
         input: [],
         output: [],
+        status: 'finished',
       },
     },
     {
@@ -402,6 +447,7 @@ QUnit.test('run program', function(assert) {
         ip: 4,
         input: [],
         output: [],
+        status: 'finished',
       },
     },
     {
@@ -411,6 +457,7 @@ QUnit.test('run program', function(assert) {
         ip: 4,
         input: [],
         output: [],
+        status: 'finished',
       },
     },
     {
@@ -421,6 +468,7 @@ QUnit.test('run program', function(assert) {
         ip: 4,
         input: [],
         output: [42],
+        status: 'finished',
       },
     },
     {
@@ -430,6 +478,7 @@ QUnit.test('run program', function(assert) {
         ip: 4,
         input: [],
         output: [],
+        status: 'finished',
       },
     },
     {
@@ -440,6 +489,7 @@ QUnit.test('run program', function(assert) {
         ip: 8,
         input: [],
         output: [1],
+        status: 'finished',
       },
     },
     {
@@ -450,6 +500,7 @@ QUnit.test('run program', function(assert) {
         ip: 8,
         input: [],
         output: [0],
+        status: 'finished',
       },
     },
     {
@@ -460,6 +511,7 @@ QUnit.test('run program', function(assert) {
         ip: 8,
         input: [],
         output: [1],
+        status: 'finished',
       },
     },
   ]
