@@ -26,13 +26,13 @@ QUnit.test('thruster_signal()', function(assert) {
 })
 
 QUnit.test('setting_options()', function(assert) {
-  assert.deepEqual(setting_options(2),
+  assert.deepEqual(setting_options([0, 1]),
                    [[0, 1], [1,0]],
-                   'setting_options(2)')
-  assert.deepEqual(setting_options(3),
-                   [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0],
-                    [2, 0, 1], [2, 1, 0]],
-                   'setting_options(3)')
+                   'setting_options([0, 1])')
+  assert.deepEqual(setting_options([2, 3, 4]),
+                   [[2, 3, 4], [2, 4, 3], [3, 2, 4], [3, 4, 2],
+                    [4, 2, 3], [4, 3, 2]],
+                   'setting_options([2, 3, 4])')
 })
 
 QUnit.test('max_thruster_signal()', function(assert) {
@@ -55,12 +55,61 @@ QUnit.test('max_thruster_signal()', function(assert) {
   })
 })
 
+const p4 = '3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,' +
+           '28,-1,28,1005,28,6,99,0,0,5'
+const p5 = '3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,' +
+           '1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,' +
+           '55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10'
+
+QUnit.test('thruster_signal() with output loop', function(assert) {
+  const cases = [
+    [p4, [9, 8, 7, 6, 5], 139629729],
+    [p5, [9, 7, 8, 5, 6], 18216],
+  ]
+  cases.forEach(function([program, phasesettings, expected]) {
+    const desc = [
+      'thruster_signal(read_program("',
+      program.split(',').slice(0, 4).join(','),
+      '"), [',
+      phasesettings.join(','),
+      '], true) === ',
+      expected
+    ].join('')
+    assert.equal(thruster_signal(read_program(program),
+                                 phasesettings,
+                                 true),
+                 expected,
+                 desc)
+  })
+})
+
+QUnit.test('max_thruster_signal() with output loop', function(assert) {
+  const cases = [
+    [p4, 139629729],
+    [p5, 18216],
+  ]
+  cases.forEach(function([program, expected]) {
+    const desc = [
+      'max_thruster_signal(read_program("',
+      program.split(',').slice(0, 4).join(','),
+      '..."), [5, 6, 7, 8, 9], true) === ',
+      expected
+    ].join('')
+    assert.equal(max_thruster_signal(read_program(program),
+                                     [5, 6, 7, 8, 9],
+                                     true),
+                 expected,
+                 desc)
+  })
+})
+
 QUnit.test('run_program() flag to pause on output', function(assert) {
   const before = {
     ip: 0,
     memory: [4, 5, 4, 6, 99, 50, 60],
     input: [],
     output: [],
+    status: 'ready',
   }
   const first = {
     ip: 2,
@@ -90,7 +139,10 @@ QUnit.test('run_program() flag to pause on output', function(assert) {
 
 QUnit.test('Solutions', async function(assert) {
   const program = await fetch_puzzle_input().then(read_program)
-  assert.equal(max_thruster_signal(program),
+  assert.equal(max_thruster_signal(program, [0, 1, 2, 3, 4]),
                46014,
-               'Part 1: max thruster signal for program is 46014')
+               'Part 1: max thruster signal for program: 46014')
+  assert.equal(max_thruster_signal(program, [5, 6, 7, 8, 9], true),
+               19581200,
+               'Part 2: max thruster signal w/looping program: 19581200')
 })
