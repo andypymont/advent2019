@@ -23,3 +23,25 @@ function checksum(image, width, height) {
   const min = Array.from(checksums.keys()).reduce((a, b) => Math.min(a, b))
   return checksums.get(min)
 }
+
+function flatten_image(image, width, height) {
+  const layers = read_layers(image, width, height)
+  const output = layers.reduce(function(atop, below) {
+    return atop.map(function(atop_pixel, ix) {
+      const below_pixel = below[ix]
+      return atop_pixel === 2 ? below_pixel : atop_pixel
+    })
+  })
+  return output
+}
+
+function render_image(image, width, height) {
+  image = flatten_image(image, width, height)
+  render_pixel = px => px === 0 ? ' ' : '#'
+  return Array(height).fill()
+                      .map((_, y) => y*width)
+                      .map(px => image.slice(px, px+width)
+                                      .map(render_pixel)
+                                      .join(''))
+                      .join('\n')
+}

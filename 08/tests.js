@@ -69,9 +69,81 @@ QUnit.test('checksum()', function(assert) {
   })
 })
 
+QUnit.test('flatten_image()', function(assert) {
+  const cases = [
+    {
+      image: '0222112222120000',
+      expected: [0, 1, 1, 0],
+      width: 2,
+      height: 2,
+    },
+    {
+      image: '012222222100202020202121212',
+      expected: [0, 1, 0, 1, 0, 1, 0, 1, 0],
+      width: 3,
+      height: 3,
+    },
+  ]
+  cases.forEach(function({ image, width, height, expected }) {
+    const desc = [
+      'flatten_image("',
+      image,
+      '",',
+      width,
+      ',',
+      height,
+      ') === [',
+      expected.join(','),
+      ']'
+    ].join('')
+    assert.deepEqual(flatten_image(image, width, height),
+                     expected,
+                     desc)
+  })
+})
+
+QUnit.test('render_image()', function(assert) {
+  const cases = [
+    {
+      image: '0222112222120000',
+      expected: ' #\n# ',
+      width: 2,
+      height: 2,
+    },
+    {
+      image: '012222222100202020202121212',
+      expected: ' # \n# #\n # ',
+      width: 3,
+      height: 3,
+    },
+  ]
+  cases.forEach(function({ image, expected, width, height }) {
+    const desc = [
+      'render_image("',
+      image,
+      '",',
+      width,
+      ',',
+      height,
+      ')'
+    ].join('')
+    assert.equal(render_image(image, width, height),
+                 expected,
+                 desc)
+  })
+})
+
 QUnit.test('Solutions', async function(assert) {
   const image = await fetch_puzzle_input()
   assert.equal(checksum(image, 25, 6),
                2684,
                'Part 1: checksum(...) of image is 2684')
+  assert.equal(render_image(image, 25, 6),
+               ['#   # ##  ###  #   ##### ',
+               '#   ##  # #  # #   #   # ',
+               ' # # #    #  #  # #   #  ',
+               '  #  # ## ###    #   #   ',
+               '  #  #  # # #    #  #    ',
+               '  #   ### #  #   #  #### '].join('\n'),
+               'Part 2: render the image: spells YGRYZ')
 })
