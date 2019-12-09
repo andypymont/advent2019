@@ -106,6 +106,7 @@ QUnit.test('max_thruster_signal() with output loop', function(assert) {
 QUnit.test('run_program() flag to pause on output', function(assert) {
   const before = {
     ip: 0,
+    rb: 0,
     memory: [4, 5, 4, 6, 99, 50, 60],
     input: [],
     output: [],
@@ -113,6 +114,7 @@ QUnit.test('run_program() flag to pause on output', function(assert) {
   }
   const first = {
     ip: 2,
+    rb: 0,
     memory: [4, 5, 4, 6, 99, 50, 60],
     input: [],
     output: [50],
@@ -120,6 +122,7 @@ QUnit.test('run_program() flag to pause on output', function(assert) {
   }
   const second = {
     ip: 4,
+    rb: 0,
     memory: [4, 5, 4, 6, 99, 50, 60],
     input: [],
     output: [50, 60],
@@ -127,6 +130,7 @@ QUnit.test('run_program() flag to pause on output', function(assert) {
   }
   const third = {
     ip: 4,
+    rb: 0,
     memory: [4, 5, 4, 6, 99, 50, 60],
     input: [],
     output: [50, 60],
