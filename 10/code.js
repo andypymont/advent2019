@@ -9,36 +9,51 @@ function read_map(map) {
             .map(([char, x, y]) => [x, y])
 }
 
-function blocked(target, blocker) {
-  const quadrant = (
-    Math.sign(target[0]) === Math.sign(blocker[0]) &&
-    Math.sign(target[1]) === Math.sign(blocker[1])
-  )
-  const on_same_line = (
-    (target[0] === 0 && blocker[0] === 0) ||
-    (target[1] === 0 && blocker[1] === 0) ||
-    (target[0]/blocker[0]) === (target[1]/blocker[1])
-  )
-  const blocker_closer = (
-    (Math.abs(blocker[0]) + Math.abs(blocker[1])) <
-    (Math.abs(target[0]) + Math.abs(target[1]))
-  )
-  return (quadrant && on_same_line && blocker_closer)
+const atan = ratio => Math.atan(ratio) * (180/Math.PI)
+
+function angle_between(origin, point) {
+  const x = point[0] - origin[0]
+  const y = point[1] - origin[1]
+  const signs = [Math.sign(x), Math.sign(y)].join(',')
+
+  return ({
+    '-1,-1': (x, y) => 270 + atan(y/x),
+    '-1,1': (x, y) => 270 - atan(y/x),
+    '1,1': (x, y) => 90 + atan(y/x),
+    '1,-1': (x, y) => 90 - atan(y/x),
+    '0,0': (x, y) => -1,
+    '1,0': (x, y) => 90,
+    '-1,0': (x, y) => 270,
+    '0,-1': (x, y) => 0,
+    '0,1': (x, y) => 180,
+  }[signs](Math.abs(x), Math.abs(y)).toFixed(2))
 }
 
-function line_of_sight(target, blockers) {
-  return blockers.filter(([x, y]) => !(x === 0 && y === 0))
-                 .filter(b => blocked(target, b)).length === 0
+function distance_between(origin, asteroid) {
+  return Math.abs(asteroid[0]-origin[0]) + Math.abs(asteroid[1]-origin[1])
 }
 
-function asteroids_visible(asteroid, ix, asteroids) {
-  return asteroids.filter((_, x) => x !== ix)
-                  .map(c => [c[0]-asteroid[0], c[1]-asteroid[1]])
-                  .filter((target, t, others) => line_of_sight(target, others))
-                  .length
+function asteroids_visible(origin, number, asteroids) {
+  const fov = new Map()
+  asteroids.filter((_, ix) => ix !== number)
+           .forEach(function(asteroid) {
+             const angle = angle_between(origin, asteroid)
+             if (!fov.has(angle)) {
+               fov.set(angle, asteroid)
+             } else {
+               const neighbour = fov.get(angle)
+               if ( distance_between(origin, asteroid) <
+                    distance_between(origin, neighbour) ) {
+                 fov.set(angle, asteroid)
+               }
+             }
+           })
+  return Array.from(fov.keys())
+              .sort((a, b) => a - b)
+              .map(angle => fov.get(angle))
 }
 
 function most_asteroids_visible(asteroids) {
   return asteroids.map(asteroids_visible)
-                  .reduce((a, b) => Math.max(a, b))
+                  .reduce((a, b) => a.length > b.length ? a : b)
 }
