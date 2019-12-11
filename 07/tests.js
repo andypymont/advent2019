@@ -103,44 +103,6 @@ QUnit.test('max_thruster_signal() with output loop', function(assert) {
   })
 })
 
-QUnit.test('run_program() flag to pause on output', function(assert) {
-  const before = {
-    ip: 0,
-    rb: 0,
-    memory: [4, 5, 4, 6, 99, 50, 60],
-    input: [],
-    output: [],
-    status: 'ready',
-  }
-  const first = {
-    ip: 2,
-    rb: 0,
-    memory: [4, 5, 4, 6, 99, 50, 60],
-    input: [],
-    output: [50],
-    status: 'paused',
-  }
-  const second = {
-    ip: 4,
-    rb: 0,
-    memory: [4, 5, 4, 6, 99, 50, 60],
-    input: [],
-    output: [50, 60],
-    status: 'paused',
-  }
-  const third = {
-    ip: 4,
-    rb: 0,
-    memory: [4, 5, 4, 6, 99, 50, 60],
-    input: [],
-    output: [50, 60],
-    status: 'finished',
-  }
-  assert.deepEqual(run_program(before, [], true), first)
-  assert.deepEqual(run_program(first, [], true), second)
-  assert.deepEqual(run_program(second, [], true), third)
-})
-
 QUnit.test('Solutions', async function(assert) {
   const program = await fetch_puzzle_input().then(read_program)
   assert.equal(max_thruster_signal(program, [0, 1, 2, 3, 4]),
