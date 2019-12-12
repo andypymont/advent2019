@@ -34,9 +34,38 @@ function energy(moon) {
 }
 
 function total_energy(moons, steps) {
-  Array(steps).fill().forEach(function() {
+  for ( let step = 0; step < steps; step++ ) {
     moons = progress_motion(moons)
-  })
+  }
   return moons.map(energy)
               .reduce((a, b) => a + b)
+}
+
+function summarise_universe(moons, dimension) {
+  const pos = { 'x': 0, 'y': 1, 'z': 2 }[dimension]
+  const vel = pos + 3
+  return moons.flatMap(moon => [moon[pos], moon[vel]]).join(',')
+}
+
+function steps_until_each_dimension_repeats(moons) {
+  const dimensions = ['x', 'y', 'z']
+  let search = new Map(dimensions.map(function(d) {
+    return [d, summarise_universe(moons, d)]
+  }))
+  let found = new Map(dimensions.map(function(d) {
+    return [d, 0]
+  }))
+
+  let steps = 0
+  while ( dimensions.map(d => found.get(d))
+                    .reduce((a, b) => Math.min(a, b)) === 0 ) {
+    steps++
+    moons = progress_motion(moons)
+    dimensions.forEach(function(d) {
+      if ( summarise_universe(moons, d) === search.get(d) ) {
+        found.set(d, steps)
+      }
+    })
+  }
+  return Array.from(found.values())
 }

@@ -191,7 +191,7 @@ QUnit.test('energy(moon)', function(assert) {
       ']) === ',
       expected
     ].join('')
-    assert.equal(energy(input), expected, desc)
+    assert.deepEqual(energy(input), expected, desc)
   })
 })
 
@@ -225,6 +225,34 @@ QUnit.test('total_energy(moons, steps)', function(assert) {
   })
 })
 
+QUnit.test('steps_until_each_dimension_repeats(moons)', function(assert) {
+  const cases = [
+    {
+      moons: [
+        [-1, 0, 2, 0, 0, 0],
+        [2, -10, -7, 0, 0, 0],
+        [4, -8, 8, 0, 0, 0],
+        [3, 5, -1, 0, 0, 0],
+      ],
+      expected: [36, 28, 44],
+      expected_lcm: 2772,
+    },
+  ]
+  cases.forEach(function({ moons, expected, expected_lcm }, ex) {
+    const desc = [
+      'example ',
+      ex+1,
+      'returns [',
+      expected.join(', '),
+      '] - LCM=',
+      expected_lcm
+    ].join('')
+    assert.deepEqual(steps_until_each_dimension_repeats(moons),
+                     expected,
+                     desc)
+  })
+})
+
 QUnit.test('Solutions', async function(assert) {
   const moons = await fetch_puzzle_input_lines().then(
     input => input.map(read_point)
@@ -233,5 +261,10 @@ QUnit.test('Solutions', async function(assert) {
     total_energy(moons, 1000),
     12644,
     'Part 1: total energy after 1000 iterations === 12,644'
+  )
+  assert.equal(
+    steps_until_each_dimension_repeats(moons),
+    [252096, 286332, 193052],
+    'Part 2: steps until initial state repeated: LCM === 290314621566528'
   )
 })
