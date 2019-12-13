@@ -36,8 +36,6 @@ function run_game(program, quarters=1) {
                           output_queue.shift(),
                           output_queue.shift()])
     }
-
-    console.log(game.score)
   }
 
   return game
