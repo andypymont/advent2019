@@ -33,17 +33,46 @@ function resolve_need(element, elements, reactions) {
   return reacted
 }
 
-function ore_needed(reactions) {
-  let elements = new Map([['FUEL', -1]])
+function ore_needed(reactions, fuel=1) {
+  let elements = new Map([['FUEL', -fuel]])
   let needs = ['FUEL']
   let reps = 0
   while ( needs.length > 0 ) {
     reps++
     if ( reps > 1000 ) { return -1 }
-    console.log(needs[0], needs.length)
     elements = resolve_need(needs[0], elements, reactions)
     needs = Array.from(elements.keys())
                  .filter(e => e !== 'ORE' && elements.get(e) < 0)
   }
   return -elements.get('ORE')
+}
+
+function binary_search(f, target, lower, upper) {
+  while (lower <= upper) {
+    const mid = Math.floor((lower + upper)/2)
+    const attempt = f(mid)
+    if ( attempt < target ) {
+      lower = mid + 1
+    } else if ( attempt > target ) {
+      upper = mid - 1
+    } else {
+      return mid
+    }
+  }
+  return upper
+}
+
+function exponential_search(f, target) {
+  let bound = 1
+  while ( f(bound) < target ) {
+    bound *= 2
+  }
+  return binary_search(f, target, bound/2, bound+1)
+}
+
+function fuel_from_trillion_ore(reactions) {
+  return exponential_search(
+    fuel => ore_needed(reactions, fuel),
+    1000000000000
+  )
 }
