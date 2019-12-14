@@ -36,10 +36,7 @@ function resolve_need(element, elements, reactions) {
 function ore_needed(reactions, fuel=1) {
   let elements = new Map([['FUEL', -fuel]])
   let needs = ['FUEL']
-  let reps = 0
   while ( needs.length > 0 ) {
-    reps++
-    if ( reps > 1000 ) { return -1 }
     elements = resolve_need(needs[0], elements, reactions)
     needs = Array.from(elements.keys())
                  .filter(e => e !== 'ORE' && elements.get(e) < 0)
