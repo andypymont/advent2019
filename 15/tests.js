@@ -25,15 +25,67 @@ QUnit.test('move(program, direction)', function(assert) {
   })
 })
 
-QUnit.test('fewest_moves(program)', function(assert) {
-  assert.equal(fewest_moves(test_program), 2)
+QUnit.test('map_region(program)', function(assert) {
+  assert.deepEqual(
+    map_region(test_program),
+    {
+      walls: new Set([
+        '0,1', '1,1', '-1,0', '2,0', '-2,-1', '1,-1', '-1,-2', '0,-2',
+      ]),
+      oxygen: '-1,-1',
+    }
+  )
+})
+
+QUnit.test('distances(region)', function(assert) {
+  const cases = [
+    {
+      input: {
+        walls: new Set([
+          '0,1', '1,1', '-1,0', '2,0', '-2,-1', '1,-1', '-1,-2', '0,-2',
+        ]),
+        oxygen: '-1,-1',
+      },
+      expected: {
+        origin: 2,
+        max: 3,
+      }
+    },
+    {
+      input: {
+        walls: new Set([
+          '0,1', '1,1', '-1,0', '2,0', '3,0', '-1,-1', '1,-1', '4,-1', '-1,-2',
+          '3,-2', '0,-3', '1,-3', '2,-3',
+        ]),
+        oxygen: '1,-2',
+      },
+      expected: {
+        origin: 3,
+        max: 4,
+      }
+    }
+  ]
+  cases.forEach(function({ input, expected }, ex) {
+    assert.deepEqual(
+      distances(input),
+      expected,
+      'Example ' + (ex+1)
+    )
+  })
 })
 
 QUnit.test('Solutions', async function(assert) {
   const program = await fetch_puzzle_input().then(read_program)
+  const dist = distances(map_region(program))
+
   assert.equal(
-    fewest_moves(program),
+    dist.origin,
     238,
     'Part 1: fewest moves === 238',
+  )
+  assert.equal(
+    dist.max,
+    392,
+    'Part 2: minutes to fill === 392'
   )
 })
