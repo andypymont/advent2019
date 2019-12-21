@@ -11,7 +11,7 @@ function pixel_counts(layer) {
   return new Map(layer.map(function(pixel, ix, layer) {
     return [
       pixel,
-      layer.filter(p => p === pixel).length
+      layer .filter(p => p === pixel).length
     ]
   }))
 }

@@ -262,7 +262,7 @@ QUnit.test('Solutions', async function(assert) {
     12644,
     'Part 1: total energy after 1000 iterations === 12,644'
   )
-  assert.equal(
+  assert.deepEqual(
     steps_until_each_dimension_repeats(moons),
     [252096, 286332, 193052],
     'Part 2: steps until initial state repeated: LCM === 290314621566528'
