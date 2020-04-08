@@ -29,19 +29,11 @@ const test_maps = [
     '#l.F..d...h..C.m#',
     '#################'
   ],
-  [
-    '########################',
-    '#@..............ac.GI.b#',
-    '###d#e#f################',
-    '###A#B#C################',
-    '###g#h#i################',
-    '########################',
-  ]
 ]
 
 const test_graphs = [
   {
-    0: {
+    'robot0': {
       1: { doors: 0, dist: 2 },
       2: { doors: 1, dist: 4 },
     },
@@ -53,7 +45,7 @@ const test_graphs = [
     }
   },
   {
-    0: {
+    'robot0': {
       1: { doors: 0, dist: 2 },
       2: { doors: 1, dist: 4 },
       4: { doors: 2, dist: 6 },
@@ -105,7 +97,7 @@ const test_graphs = [
     },
   },
   {
-    0: {
+    'robot0': {
       1: { doors: 0, dist: 2 },
       2: { doors: 0, dist: 22 },
       4: { doors: 2, dist: 6 },
@@ -172,7 +164,7 @@ const test_graphs = [
     },
   },
   {
-    0: {
+    'robot0': {
       1: { doors: 0, dist: 3 },
       2: { doors: 0, dist: 3 },
       4: { doors: 0, dist: 5 },
@@ -465,6 +457,145 @@ const test_graphs = [
   }
 ]
 
+const test_maps_fourbots = [
+  [
+    '#######',
+    '#a.#Cd#',
+    '##...##',
+    '##.@.##',
+    '##...##',
+    '#cB#Ab#',
+    '#######',
+  ],
+  [
+    '###############',
+    '#d.ABC.#.....a#',
+    '######...######',
+    '######.@.######',
+    '######...######',
+    '#b.....#.....c#',
+    '###############',
+  ],
+  [
+    '#############',
+    '#DcBa.#.GhKl#',
+    '#.###...#I###',
+    '#e#d#.@.#j#k#',
+    '###C#...###J#',
+    '#fEbA.#.FgHi#',
+    '#############',
+  ]
+]
+
+const test_graphs_fourbots = [
+  {
+    'robot0': {
+      1: { doors: 0, dist: 2 },
+    },
+    'robot1': {
+      8: { doors: 4, dist: 2 },
+    },
+    'robot2': {
+      4: { doors: 2, dist: 2 },
+    },
+    'robot3': {
+      2: { doors: 1, dist: 2 },
+    },
+    1: {},
+    2: {},
+    4: {},
+    8: {},
+  },
+  {
+    'robot0': {
+      8: { doors: 7, dist: 6 },
+    },
+    'robot1': {
+      1: { doors: 0, dist: 6 },
+    },
+    'robot2': {
+      2: { doors: 0, dist: 6 },
+    },
+    'robot3': {
+      4: { doors: 0, dist: 6 },
+    },
+    1: {},
+    2: {},
+    4: {},
+    8: {},
+  },
+  {
+    'robot0': {
+      1: { doors: 0, dist: 2 },
+      4: { doors: 2, dist: 4 },
+      16: { doors: 10, dist: 7 },
+    },
+    'robot1': {
+      128: { doors: 64, dist: 3 },
+      512: { doors: 320, dist: 5 },
+      2048: { doors: 1088, dist: 5 },
+    },
+    'robot2': {
+      2: { doors: 1, dist: 3 },
+      8: { doors: 5, dist: 5 },
+      32: { doors: 17, dist: 5 },
+    },
+    'robot3': {
+      64: { doors: 32, dist: 3 },
+      256: { doors: 160, dist: 5 },
+      1024: { doors: 672, dist: 7 },
+    },
+    1: {
+      4: { doors: 2, dist: 2 },
+      16: { doors: 10, dist: 5 },
+    },
+    2: {
+      8: { doors: 4, dist: 2 },
+      32: { doors: 16, dist: 2 },
+    },
+    4: {
+      1: { doors: 2, dist: 2 },
+      16: { doors: 8, dist: 3 },
+    },
+    8: {
+      2: { doors: 4, dist: 2 },
+      32: { doors: 20, dist: 4 },
+    },
+    16: {
+      1: { doors: 10, dist: 5 },
+      4: { doors: 8, dist: 3 },
+    },
+    32: {
+      2: { doors: 16, dist: 2 },
+      8: { doors: 20, dist: 4 },
+    },
+    64: {
+      256: { doors: 128, dist: 2 },
+      1024: { doors: 640, dist: 4 },
+    },
+    128: {
+      512: { doors: 256, dist: 2 },
+      2048: { doors: 1024, dist: 2 },
+    },
+    256: {
+      64: { doors: 128, dist: 2 },
+      1024: { doors: 512, dist: 2 },
+    },
+    512: {
+      128: { doors: 256, dist: 2 },
+      2048: { doors: 1280, dist: 4 },
+    },
+    1024: {
+      64: { doors: 640, dist: 4 },
+      256: { doors: 512, dist: 2 },
+    },
+    2048: {
+      128: { doors: 1024, dist: 2},
+      512: { doors: 1280, dist: 4 },
+    },
+  }
+]
+
 QUnit.test('graph_of_map(map)', function(assert) {
   assert.deepEqual(graph_of_map(test_maps[0]), test_graphs[0])
   assert.deepEqual(graph_of_map(test_maps[1]), test_graphs[1])
@@ -474,9 +605,9 @@ QUnit.test('graph_of_map(map)', function(assert) {
 
 QUnit.test('accessible_paths(graph, pos, keyring)', function(assert) {
   const cases = [
-    [test_graphs[0], 0, 0, [[1, 2]]],
+    [test_graphs[0], 'robot0', 0, [[1, 2]]],
     [test_graphs[0], 1, 1, [[2, 6]]],
-    [test_graphs[1], 0, 0, [[1, 2]]],
+    [test_graphs[1], 'robot0', 0, [[1, 2]]],
     [test_graphs[1], 1, 1, [[2, 6]]],
     [test_graphs[1], 1, 5, [[2, 6], [16, 10]]],
   ]
@@ -503,7 +634,6 @@ QUnit.test('route_prioritiser()', function(assert) {
   assert.deepEqual(pq.pop(), high, 'Pop 3rd item')
   assert.equal(pq.size(), 0, 'Check size when empty')
 
-  // const high_new_route = ['bca', 40]
   const high_new_route = [7, 1, 40]
 
   assert.equal(pq.push(high), 1, 'Insert 1st item')
@@ -518,17 +648,38 @@ QUnit.test('route_prioritiser()', function(assert) {
 })
 
 QUnit.test('shortest_path(graph)', function(assert) {
-  assert.equal(8, shortest_path(test_graphs[0]))
-  assert.equal(86, shortest_path(test_graphs[1]))
-  assert.equal(132, shortest_path(test_graphs[2]))
-  assert.equal(136, shortest_path(test_graphs[3]))
+  assert.equal(shortest_path(test_graphs[0]), 8)
+  assert.equal(shortest_path(test_graphs[1]), 86)
+  assert.equal(shortest_path(test_graphs[2]), 132)
+  assert.equal(shortest_path(test_graphs[3]), 136)
+})
+
+QUnit.test('graph_of_map(map, true)', function(assert) {
+  test_maps_fourbots.forEach(function(map, i) {
+    assert.deepEqual(graph_of_map(map, true), test_graphs_fourbots[i])
+  })
+})
+
+QUnit.test('shortest_path(graph_with_four_bots)', function(assert) {
+  assert.equal(shortest_path(test_graphs_fourbots[0]), 8)
+  assert.equal(shortest_path(test_graphs_fourbots[1]), 24)
+  assert.equal(shortest_path(test_graphs_fourbots[2]), 32)
 })
 
 QUnit.test('Solutions', async function(assert) {
   const map = await fetch_puzzle_input_lines()
+
+  const graph = graph_of_map(map)
+  const graph_two = graph_of_map(map, true)
+
   assert.equal(
-    shortest_path(graph_of_map(map)),
+    shortest_path(graph),
     3962,
     'Part 1: shortest path = 3962',
+  )
+  assert.equal(
+    shortest_path(graph_two),
+    1844,
+    'Part 1: shortest path with four separate vaults = 1844',
   )
 })

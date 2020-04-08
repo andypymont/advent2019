@@ -8,10 +8,23 @@ function adjacent(coords, walls) {
   }).filter(neighbour => !walls.has(neighbour))
 }
 
-function graph_of_map(map) {
+function graph_of_map(map, fourbots) {
   const walls = new Set()
   const keylocations = new Map()
   const contents = new Map()
+  const robots = []
+
+  if (fourbots) {
+    const [rx, ry] = map.map(function(line, y, map) {
+      const x = line.indexOf('@')
+      if (x !== -1) {
+        return [x, y]
+      }
+    }).filter(v => v)[0]
+    map[ry-1] = map[ry-1].slice(0, rx-1) + '@#@' + map[ry-1].slice(rx+2)
+    map[ry] = map[ry].slice(0, rx-1) + '###' + map[ry].slice(rx+2)
+    map[ry+1] = map[ry+1].slice(0, rx-1) + '@#@' + map[ry+1].slice(rx+2)
+  }
 
   map.forEach(function(line, y) {
     line.split('').forEach(function(char, x) {
@@ -19,7 +32,8 @@ function graph_of_map(map) {
       if ( char === '#' ) {
         walls.add(coords)
       } else if ( char === '@' ) {
-        keylocations.set(0, coords)
+        const bot = robots.push(coords) - 1
+        keylocations.set('robot' + bot, coords)
       } else if ( /([A-Z])/.test(char) ) {
         const val = 1 << (char.charCodeAt(0) - 65)
         contents.set(coords, [val, 'door'])
@@ -64,11 +78,11 @@ function graph_of_map(map) {
   }
 
   const graph = {}
+  Array.from(keylocations.keys()).forEach(function(k) {
+    graph[k] = {}
+  })
   Array.from(shortroutes).forEach(function([route, [doors, dist]]) {
     const [origin, destination] = route.split('->') //.map(i => parseInt(i))
-    if ( !(origin in graph)  ) {
-      graph[origin] = {}
-    }
     graph[origin][destination] = { doors, dist }
   })
 
@@ -187,21 +201,31 @@ function route_prioritiser() {
 
 function shortest_path(graph) {
   const consider = route_prioritiser()
-  const allkeys = Object.keys(graph).map(i => parseInt(i)).reduce((a, b) => a|b)
+  const [robots, allkeys] = Object.keys(graph).reduce(function(acc, k) {
+    if ( k.includes('robot') ) {
+      acc[0].push(k)
+    } else {
+      acc[1] = acc[1]|parseInt(k)
+    }
+    return acc
+  }, [[], 0])
 
-  accessible_paths(graph, 0, 0).forEach(function([pos, dist]) {
-    consider.push([pos, pos, dist])
-  })
+  consider.push([0, robots, 0])
 
   while ( consider.size() > 0 ) {
-    const [keyring, pos, dist] = consider.pop()
+    const [keyring, positions, dist] = consider.pop()
     if ( keyring === allkeys ) {
       return dist
     }
-    accessible_paths(graph, pos, keyring).forEach(function([npos, xtradist]) {
-      const nkeyring = keyring + npos
-      const ndist = dist + xtradist
-      consider.push([nkeyring, npos, ndist])
+    positions.forEach(function(pos, p) {
+      accessible_paths(graph, pos, keyring).forEach(function([npos, xtradist]) {
+        const nkeyring = keyring|npos
+        const ndist = dist + xtradist
+        const npositions = positions.map(function(oldpos, o) {
+          return ( o === p ) ? npos : oldpos
+        })
+        consider.push([nkeyring, npositions, ndist])
+      })
     })
   }
 
