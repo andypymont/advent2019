@@ -6,28 +6,46 @@ function run_intcode_network(program) {
   )
   const addresses = Array.from(computers.keys())
   const packets = []
-  let solution = { x: 0, y: 0, address: 0 }
+  const nat = {}
+  const rv = {}
+  let idle = 0
 
-  while ( solution.address === 0 ) {
+  function send_packet(address, x, y) {
+    if ( address === 255 ) {
+      rv.first = rv.first||y
+      nat.x = x
+      nat.y = y
+    } else {
+      const target = computers.get(address)
+      target.input.push(x)
+      target.input.push(y)
+    }
+  }
+
+  while ( !rv.repeated ) {
     addresses.forEach(function(address) {
-      let computer = op(computers.get(address))
+      const computer =  op(computers.get(address))
       while ( computer.output.length >= 3 ) {
-        const packet = {
-          address: computer.output.shift(),
-          x: computer.output.shift(),
-          y: computer.output.shift(),
-        }
-        if ( packet.address === 255 ) {
-          solution = packet
-        } else {
-          const computer = computers.get(packet.address)
-          computer.input.push(packet.x)
-          computer.input.push(packet.y)
-        }
+        idle = 0
+        const target = computer.output.shift()
+        const x = computer.output.shift()
+        const y = computer.output.shift()
+        send_packet(target, x, y)
       }
       computers.set(address, computer)
     })
+    const pending_inputs = !addresses.every(function(address) {
+      return (computers.get(address).input.length === 0)
+    })
+    idle = (pending_inputs ? 0 : idle)
+    if ( idle > 1000 && nat.x ) {
+      rv.repeated = ( nat.y === nat.prev ) ? nat.y : rv.repeated
+      nat.prev = nat.y
+      send_packet(0, nat.x, nat.y)
+    } else {
+      idle += 1
+    }
   }
 
-  return solution
+  return rv
 }
