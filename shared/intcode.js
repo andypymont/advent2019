@@ -36,7 +36,8 @@ function op({ ip, rb, memory, input, output, status }, pause_on_output=false) {
     memory = new_memory(memory, arg(3), read(1) * read(2))
     ip += 4
   } else if ( opcode === 3 ) { // INPUT
-    memory = new_memory(memory, arg(1), input[0])
+    const first = (input.length === 0) ? -1 : input[0]
+    memory = new_memory(memory, arg(1), first)
     input = input.slice(1)
     ip += 2
   } else if ( opcode === 4 ) { // OUTPUT
